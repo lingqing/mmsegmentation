@@ -3,6 +3,13 @@ import torch
 import torch.nn as nn
 
 
+def my_accuracy(pred, target):
+    delta = (target - pred).abs()
+    mask = (target.abs() > 1)
+    acc_num = (delta[mask] < 1.0).sum()
+    # correct = 0
+    return acc_num.float() / mask.sum().float() * 100.0
+
 def accuracy(pred, target, topk=1, thresh=None, ignore_index=None):
     """Calculate accuracy according to the prediction and target.
 
@@ -23,6 +30,7 @@ def accuracy(pred, target, topk=1, thresh=None, ignore_index=None):
             function will return a tuple containing accuracies of
             each ``topk`` number.
     """
+    return my_accuracy(pred, target)
     assert isinstance(topk, (int, tuple))
     if isinstance(topk, int):
         topk = (topk, )
@@ -34,7 +42,7 @@ def accuracy(pred, target, topk=1, thresh=None, ignore_index=None):
     if pred.size(0) == 0:
         accu = [pred.new_tensor(0.) for i in range(len(topk))]
         return accu[0] if return_single else accu
-    assert pred.ndim == target.ndim + 1
+    assert pred.ndim == target.ndim + 1 or pred.ndim == target.ndim
     assert pred.size(0) == target.size(0)
     assert maxk <= pred.size(1), \
         f'maxk {maxk} exceeds pred dimension {pred.size(1)}'
@@ -88,5 +96,6 @@ class Accuracy(nn.Module):
         Returns:
             tuple[float]: The accuracies under different topk criterions.
         """
-        return accuracy(pred, target, self.topk, self.thresh,
-                        self.ignore_index)
+        # return accuracy(pred, target, self.topk, self.thresh,
+        #                 self.ignore_index)
+        return my_accuracy(pred, target)

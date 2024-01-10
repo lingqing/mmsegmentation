@@ -113,5 +113,6 @@ class PSPHead(BaseDecodeHead):
     def forward(self, inputs):
         """Forward function."""
         output = self._forward_feature(inputs)
+        # print(f'11111-inputs.shape={inputs[0].shape}, output.shape={output.shape}')
         output = self.cls_seg(output)
         return output

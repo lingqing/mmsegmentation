@@ -63,6 +63,7 @@ class EncoderDecoder(BaseSegmentor):
 
     def extract_feat(self, img):
         """Extract features from images."""
+        # print(f'extract feature.....')
         x = self.backbone(img)
         if self.with_neck:
             x = self.neck(x)
@@ -143,6 +144,7 @@ class EncoderDecoder(BaseSegmentor):
 
         loss_decode = self._decode_head_forward_train(x, img_metas,
                                                       gt_semantic_seg)
+        # print(f'img.shape={img.shape}, x.shape={x[0].shape}, gt_seg.shape={gt_semantic_seg.shape}')
         losses.update(loss_decode)
 
         if self.with_auxiliary_head:
